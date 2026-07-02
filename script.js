@@ -15,7 +15,7 @@ form.addEventListener("submit", async function (event) {
 
     try {
 
-        const response = await fetch("http://localhost:5000/generate", {
+        const response = await fetch("https://cover-letter-generator-production-03ca.up.railway.app/generate", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"

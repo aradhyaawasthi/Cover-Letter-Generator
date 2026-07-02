@@ -14,10 +14,12 @@ const ai = new GoogleGenAI({
     apiKey: process.env.GEMINI_API_KEY
 });
 
+// Test Route
 app.get("/", (req, res) => {
     res.send("Server is running...");
 });
 
+// Generate Cover Letter
 app.post("/generate", async (req, res) => {
     try {
         const { name, role, company, skills } = req.body;
@@ -45,9 +47,13 @@ Rules:
         });
 
         const coverLetter =
-            typeof response.text === "function"
-                ? response.text()
-                : response.text;
+            response.candidates?.[0]?.content?.parts?.[0]?.text;
+
+        if (!coverLetter) {
+            return res.status(500).json({
+                error: "Cover letter could not be generated."
+            });
+        }
 
         res.json({
             coverLetter
