@@ -4,21 +4,22 @@ import dotenv from "dotenv";
 import { GoogleGenAI } from "@google/genai";
 
 dotenv.config();
-const ai = new GoogleGenAI({
-    apiKey: process.env.GEMINI_API_KEY
-});
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
+const ai = new GoogleGenAI({
+    apiKey: process.env.GEMINI_API_KEY
+});
+
 app.get("/", (req, res) => {
     res.send("Server is running...");
 });
+
 app.post("/generate", async (req, res) => {
     try {
-
         const { name, role, company, skills } = req.body;
 
         const prompt = `
@@ -43,22 +44,25 @@ Rules:
             contents: prompt
         });
 
+        const coverLetter =
+            typeof response.text === "function"
+                ? response.text()
+                : response.text;
+
         res.json({
-            coverLetter: response.text
+            coverLetter
         });
 
     } catch (error) {
-
-        console.error(error);
+        console.error("Gemini Error:", error);
 
         res.status(500).json({
             error: "Failed to generate cover letter."
         });
-
     }
 });
 
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);

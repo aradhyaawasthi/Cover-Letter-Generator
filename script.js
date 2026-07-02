@@ -16,40 +16,38 @@ form.addEventListener("submit", async function (event) {
     try {
 
         const response = await fetch("http://localhost:5000/generate", {
-
             method: "POST",
-
             headers: {
                 "Content-Type": "application/json"
             },
-
             body: JSON.stringify({
                 name,
                 role,
                 company,
                 skills
             })
-
         });
 
         const data = await response.json();
 
-        output.innerText = data.coverLetter;
+        if (data.coverLetter) {
+            output.innerText = data.coverLetter;
+        } else {
+            output.innerText = data.error || "Something went wrong.";
+        }
 
-    }
+    } catch (error) {
 
-    catch (error) {
-
+        console.error(error);
         output.innerText = "Something went wrong. Please try again.";
 
     }
 
 });
+
 copyBtn.addEventListener("click", function () {
 
-    const text = output.innerText;
-
-    navigator.clipboard.writeText(text);
+    navigator.clipboard.writeText(output.innerText);
 
     alert("Cover Letter copied successfully!");
 
